@@ -1,0 +1,5 @@
+# Environment variables
+.env
+
+# Build files
+scwm-sensor-api
