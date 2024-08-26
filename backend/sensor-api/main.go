@@ -6,6 +6,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/webdevcaptain/scwm-sensor-api/queues"
+	"github.com/webdevcaptain/scwm-sensor-api/routes"
 )
 
 func main() {
@@ -16,16 +18,15 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	// Initialize Gin
+	// Intialize rabbitmq
+	cleanupQueue := queues.InitRabbitMQ()
+	defer cleanupQueue()
+
+	// Initialize Gin app
 	server := gin.Default()
 
-	// [TODO]: Setup routes
-
-	server.GET("/hello", func(ctx *gin.Context) {
-		ctx.JSON(200, gin.H{
-			"message": "Hello from Sensor API.",
-		})
-	})
+	// Setup routes
+	routes.Register(server)
 
 	// Setup PORT and start server
 	if err := server.Run(":" + os.Getenv("PORT")); err != nil {
